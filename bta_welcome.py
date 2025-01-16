@@ -36,7 +36,7 @@ def main():
                 print(f"Welcome, {added_user}")
                 # Display the name on a connected display here
             elif "joined" in text:
-                joined_user = text.split(" joined the group.")[0]
+                joined_user = text.split(" has joined the group")[0]
                 print(f"Welcome, {joined_user}")
         time.sleep(2)  # Avoid spamming the API
 
