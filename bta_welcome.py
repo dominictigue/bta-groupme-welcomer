@@ -19,15 +19,21 @@ last_message_id = None
 current_member_count = 0
 
 def get_mem_count():
+    """Fetches group details, including member count."""
     global current_member_count
     response = requests.get(GROUP_URL, headers=HEADERS)
-
     if response.status_code == 200:
-        member_count = response.json().get("response", {}).get("members_count", [])      
-        current_member_count = member_count
-        return member_count
-
+        group_info = response.json().get("response", {})
+        member_count = group_info.get("members_count")  # Use members_count directly
+        if isinstance(member_count, int):  # Ensure it's an integer
+            current_member_count = member_count
+            return member_count
+        else:
+            print("Unexpected 'members_count' format:", member_count)
+    else:
+        print(f"Failed to fetch group info: {response.status_code}")
     return current_member_count
+
 
 
 def get_messages():
