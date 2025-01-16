@@ -14,28 +14,24 @@ GROUP_URL = f"https://api.groupme.com/v3/groups/{GROUP_ID}"
 MESSAGE_URL = f"https://api.groupme.com/v3/groups/{GROUP_ID}/messages"
 HEADERS = {"X-Access-Token": ACCESS_TOKEN}
 
-# Track the latest message ID
+# Track the latest message ID and member count
 last_message_id = None
 current_member_count = 0
 
+# Get member count
 def get_mem_count():
-    """Fetches group details, including member count."""
     global current_member_count
     response = requests.get(GROUP_URL, headers=HEADERS)
+    
     if response.status_code == 200:
-        group_info = response.json().get("response", {})
-        member_count = group_info.get("members_count")  # Use members_count directly
-        if isinstance(member_count, int):  # Ensure it's an integer
-            current_member_count = member_count
-            return member_count
-        else:
-            print("Unexpected 'members_count' format:", member_count)
+        member_count = response.json().get("response", {}).get("members_count")
+
+        return member_count
     else:
-        print(f"Failed to fetch group info: {response.status_code}")
+        print(f"Failed to fetch member count: {response.status_code}")
     return current_member_count
 
-
-
+# Get message
 def get_messages():
     global last_message_id
     params = {"limit": 1}  # Get the latest message
@@ -50,14 +46,17 @@ def get_messages():
             if message["id"] != last_message_id:
                 last_message_id = message["id"]
                 return message
+    else:
+        print(f"Failed to fetch message: {response.status_code}")
     return None
 
+# Display to LCD
 def display(line1, line2 = ""):
     try:
         lcd.clear()
-        lcd.text(line1, 1)
+        lcd.text(f"{line1}", 1)
         if line2:
-            lcd.text(line2, 2)
+            lcd.text(f"{line2}", 2)
     except Exception as e:
         print(f"Error displaying text on LCD: {e}")
 
