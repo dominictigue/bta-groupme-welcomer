@@ -32,7 +32,7 @@ def get_group_info():
 def get_messages():
     global last_message_id
     params = {"limit": 1}  # Get the latest message
-    response = requests.get(API_URL, headers=HEADERS, params=params)
+    response = requests.get(MESSAGE_URL, headers=HEADERS, params=params)
     
     if response.status_code == 200:
         messages = response.json().get("response", {}).get("messages", [])
