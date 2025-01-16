@@ -18,16 +18,17 @@ HEADERS = {"X-Access-Token": ACCESS_TOKEN}
 last_message_id = None
 current_member_count = 0
 
-def get_group_info():
+def get_mem_count():
     global current_member_count
     response = requests.get(GROUP_URL, headers=HEADERS)
 
     if response.status_code == 200:
-        group_info = response.json().get("response", {})
-        member_count = len(group_info.get("members", []))
-        current_member_count = member_count        
+        member_count = response.json().get("response", {}).get("members_count", [])      
+        current_member_count = member_count
         return member_count
+
     return current_member_count
+
 
 def get_messages():
     global last_message_id
@@ -57,7 +58,7 @@ def display(line1, line2 = ""):
 def main():
     global current_member_count
     
-    current_member_count = get_group_info()
+    current_member_count = get_mem_count()
     display(f"BTA Members:", current_member_count)
     
     while True:
@@ -71,7 +72,7 @@ def main():
                 text = text.split(" added ")[1]
                 added_user = text.split(" to the group.")[0]
                 
-                current_member_count = get_group_info()
+                current_member_count = get_mem_count()
 
                 print(f"Welcome, {added_user}")
                 display(f"Welcome,", added_user)
@@ -80,7 +81,7 @@ def main():
             elif "joined" in text:
                 joined_user = text.split(" has joined the group")[0]
 
-                current_member_count = get_group_info()
+                current_member_count = get_mem_count()
                 
                 print(f"Welcome, {joined_user}")
                 display(f"Welcome,", joined_user) 
